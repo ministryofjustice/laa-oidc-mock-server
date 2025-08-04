@@ -8,7 +8,7 @@ logging:
 spring:
   security:
     user:
-      name: "PENNY.WALL@SWITALSKIS.COM"
+      name: "provider.user@provider.com"
       password: "{noop}password"
       roles: "USER"
     oauth2:
