@@ -35,6 +35,11 @@ docker-compose up -d
 
 #### Creating a docker image
 
+First build the jar file:
+```bash
+./gradlew clean build
+```
+
 Build the docker image:
 
 ```bash
