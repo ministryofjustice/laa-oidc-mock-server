@@ -26,6 +26,15 @@ Using the Gradle wrapper:
 
 ### Running the server via docker
 
+#### Using docker-compose within this repository
+
+For a fast way to run the server, you can use the docker-compose.yml file in this repository:
+```bash
+docker-compose up -d
+```
+
+#### Creating a docker image
+
 Build the docker image:
 
 ```bash
