@@ -24,7 +24,31 @@ Using the Gradle wrapper:
 ./gradlew clean build
 ```
 
-### Run the Application
+### Running the server via docker
+
+Build the docker image:
+
+```bash
+docker build . -t laa-oidc-mock-server:latest
+```
+
+Then include the service in your docker-compose.yml file for the application you wish to use
+the OIDC mock server for:
+
+```yaml
+services:
+  laa-mock-oidc-service:
+    image: laa-oidc-mock-server:latest
+    ports:
+      - "9000:9000"
+```
+
+Then run the docker-compose file:
+```shell
+docker-compose up -d
+```
+
+### Run the Application (Old)
 
 ```bash
 ./gradlew bootRun
