@@ -2,6 +2,7 @@
 package uk.gov.mockserver;
 
 import java.util.Collections;
+import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
@@ -45,6 +46,7 @@ public class IdTokenCustomizerConfig {
         .phoneNumberVerified(false)
         .claim("address", Collections.singletonMap("formatted",
             "Champ de Mars\n5 Av. Anatole France\n75007 Paris\nFrance"))
+        .claim("LAA_ACCOUNTS", List.of("1", "123", "0P322F"))
         .updatedAt("2025-01-01T00:00:00Z")
         .build();
   }
