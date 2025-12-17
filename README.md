@@ -102,6 +102,11 @@ src/
 
 The application can be configured through the `application.yml` file located in `src/main/resources/`.
 
+### Environment variables
+
+- `LAA_ACCOUNTS` (comma separated) controls the values emitted in the `LAA_ACCOUNTS` ID token claim.  
+  Defaults to `1,123,0P322F`.
+
 ## Development
 
 This project uses:
