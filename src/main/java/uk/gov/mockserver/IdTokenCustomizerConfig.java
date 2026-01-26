@@ -3,6 +3,7 @@ package uk.gov.mockserver;
 
 import java.util.Collections;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
@@ -12,6 +13,13 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 
 @Configuration
 public class IdTokenCustomizerConfig {
+
+  private final List<String> laaAccounts;
+
+  public IdTokenCustomizerConfig(
+      @Value("${LAA_ACCOUNTS:1,123,0P322F}") List<String> laaAccounts) {
+    this.laaAccounts = List.copyOf(laaAccounts);
+  }
 
   @Bean
   public OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer() {
@@ -46,7 +54,7 @@ public class IdTokenCustomizerConfig {
         .phoneNumberVerified(false)
         .claim("address", Collections.singletonMap("formatted",
             "Champ de Mars\n5 Av. Anatole France\n75007 Paris\nFrance"))
-        .claim("LAA_ACCOUNTS", List.of("1", "123", "0P322F"))
+        .claim("LAA_ACCOUNTS", laaAccounts)
         .updatedAt("2025-01-01T00:00:00Z")
         .build();
   }
