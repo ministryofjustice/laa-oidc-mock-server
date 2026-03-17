@@ -55,6 +55,8 @@ public class IdTokenCustomizerConfig {
         .claim("address", Collections.singletonMap("formatted",
             "Champ de Mars\n5 Av. Anatole France\n75007 Paris\nFrance"))
         .claim("LAA_ACCOUNTS", laaAccounts)
+        .claim("FIRM_NAME", "SWITALSKI'S SOLICITORS LTD")
+        .claim("FIRM_CODE", "3637")
         .updatedAt("2025-01-01T00:00:00Z")
         .build();
   }
