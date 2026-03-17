@@ -23,8 +23,8 @@ public class IdTokenCustomizerConfig {
           @Value("${FIRM_CODE:1234}") String firmCode,
           @Value("${FIRM_NAME:TEST FIRM NAME}") String firmName) {
     this.laaAccounts = List.copyOf(laaAccounts);
-      this.firmCode = firmCode;
-      this.firmName = firmName;
+    this.firmCode = firmCode;
+    this.firmName = firmName;
   }
 
   @Bean
