@@ -15,10 +15,16 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 public class IdTokenCustomizerConfig {
 
   private final List<String> laaAccounts;
+  private final String firmCode;
+  private final String firmName;
 
   public IdTokenCustomizerConfig(
-      @Value("${LAA_ACCOUNTS:1,123,0P322F}") List<String> laaAccounts) {
+          @Value("${LAA_ACCOUNTS:1,123,0P322F}") List<String> laaAccounts,
+          @Value("${FIRM_CODE:1234}") String firmCode,
+          @Value("${FIRM_NAME:TEST FIRM NAME}") String firmName) {
     this.laaAccounts = List.copyOf(laaAccounts);
+      this.firmCode = firmCode;
+      this.firmName = firmName;
   }
 
   @Bean
@@ -55,8 +61,8 @@ public class IdTokenCustomizerConfig {
         .claim("address", Collections.singletonMap("formatted",
             "Champ de Mars\n5 Av. Anatole France\n75007 Paris\nFrance"))
         .claim("LAA_ACCOUNTS", laaAccounts)
-        .claim("FIRM_NAME", "SWITALSKI'S SOLICITORS LTD")
-        .claim("FIRM_CODE", "3637")
+        .claim("FIRM_NAME", firmName)
+        .claim("FIRM_CODE", firmCode)
         .updatedAt("2025-01-01T00:00:00Z")
         .build();
   }
