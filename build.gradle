@@ -1,7 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.5.4'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'uk.gov.laa.springboot.laa-spring-boot-gradle-plugin' version '2.0.8'
 }
 
 group = 'uk.gov'
@@ -19,8 +18,9 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation "org.springframework.security:spring-security-oauth2-authorization-server:1.5.1"
+    implementation "org.springframework.security:spring-security-oauth2-authorization-server"
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'commons-logging:commons-logging' // required by spring-core logging bridge in Boot 4
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
