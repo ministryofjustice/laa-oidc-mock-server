@@ -106,6 +106,10 @@ The application can be configured through the `application.yml` file located in 
 
 - `LAA_ACCOUNTS` (comma separated) controls the values emitted in the `LAA_ACCOUNTS` ID token claim.  
   Defaults to `1,123,0P322F`.
+- `FIRM_CODE` controls the values emitted in the `FIRM_CODE` ID token claim.  
+    Defaults to `1234`.
+- `FIRM_NAME` controls the values emitted in the `FIRM_NAME` ID token claim.  
+    Defaults to `TEST FIRM NAME`.
 
 ## Development
 
