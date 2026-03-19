@@ -25,9 +25,9 @@ spring:
                 - "refresh_token"
                 - "client_credentials"
               redirect-uris:
-                - "http://127.0.0.1:8082/login/oauth2/code/silas-identity"
+                - "http://${REDIRECT_BASE_URI:127.0.0.1:8082}/login/oauth2/code/silas-identity"
               post-logout-redirect-uris:
-                - "http://127.0.0.1:8082/logged-out"
+                - "http://${REDIRECT_BASE_URI:127.0.0.1:8082}/logged-out"
               scopes:
                 - "openid"
                 - "profile"
