@@ -115,5 +115,5 @@ The application can be configured through the `application.yml` file located in 
 
 This project uses:
 - Spring Boot 4.0.3
-- Java 25
+- Java 21
 - Gradle as the build tool
