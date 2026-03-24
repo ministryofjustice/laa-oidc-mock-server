@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'uk.gov.laa.springboot.laa-spring-boot-gradle-plugin' version '2.1.2'
+    id 'uk.gov.laa.springboot.laa-spring-boot-gradle-plugin' version 'laa-spring-boot-common-2.2.0'
 }
 
 group = 'uk.gov'
