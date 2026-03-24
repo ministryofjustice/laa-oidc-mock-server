@@ -1,14 +1,10 @@
 name: Build and Publish OIDC mock image
 
 on:
-  workflow_call:
-    secrets:
-      LAA_MOCK_OIDC_SERVER_ECR_ROLE_TO_ASSUME:
-        required: true
-    outputs:
-      oidc_mock_tag:
-        description: "OIDC mock image tag pushed to ECR"
-        value: ${{ jobs.build.outputs.oidc_mock_tag }}
+  pull_request:
+
+permissions:
+  contents: read
 
 jobs:
   build:
