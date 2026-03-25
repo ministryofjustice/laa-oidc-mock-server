@@ -1,7 +1,9 @@
-name: Build and Publish OIDC mock image
+name: Build and Publish OIDC mock image to ECR
 
 on:
-  pull_request:
+  push:
+    branches:
+      - main
 
 permissions:
   contents: read
