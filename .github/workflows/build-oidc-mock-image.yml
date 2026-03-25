@@ -15,6 +15,8 @@ jobs:
       packages: read
     outputs:
       oidc_mock_tag: ${{ steps.build.outputs.oidc_mock_tag }}
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Get app token
