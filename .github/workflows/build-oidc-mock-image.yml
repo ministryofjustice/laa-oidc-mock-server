@@ -4,75 +4,40 @@ on:
   push:
     branches:
       - main
+      - build-to-ecr
 
 permissions:
   contents: read
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  assemble:
+    uses: ministryofjustice/laa-ccms-common-workflows/.github/workflows/gradle-build-and-publish.yml@v1
     permissions:
-      id-token: write
       contents: write
-      packages: read
-    outputs:
-      oidc_mock_tag: ${{ steps.build.outputs.oidc_mock_tag }}
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      packages: write
+    with:
+      build_command: 'assemble'
+      publish_package: 'false'
+      override_version: ${{ needs.define-feature-version.outputs.feature_version }}
+      junit_results: 'false'
+      junit_report: 'false'
+      checkstyle_report: 'false'
+      jacoco_coverage_report: 'false'
+    secrets:
+      gh_token: ${{ secrets.GITHUB_TOKEN }}
 
-    steps:
-      - name: Get app token
-        id: get_workflow_token
-        uses: peter-murray/workflow-application-token-action@d17e3a9a36850ea89f35db16c1067dd2b68ee343 # v4.0.1
-        with:
-          application_id: ${{ vars.LAA_JAVA_SERVICE_DEPLOYER_APP_ID }}
-          application_private_key: ${{ secrets.LAA_JAVA_SERVICE_DEPLOYER_KEY }}
-          organization: 'ministryofjustice'
-
-      - name: Checkout OIDC mock repo
-        uses: actions/checkout@v6
-        with:
-          repository: ministryofjustice/laa-oidc-mock-server
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Set up JDK 25
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '25'
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Gradle assemble
-        run: ./gradlew assemble
-
-      - name: Configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.LAA_OIDC_MOCK_SERVER_ECR_ROLE_TO_ASSUME }}
-          aws-region: ${{ vars.LAA_OIDC_MOCK_SERVER_ECR_REGION }}
-
-      - name: Login ecr
-        uses: aws-actions/amazon-ecr-login@v2
-        id: login-ecr
-
-      - name: Build and push OIDC mock image
-        id: build
-        run: |
-          set -euo pipefail
-          registry="${{ steps.login-ecr.outputs.registry }}"
-          repository="${{ vars.LAA_OIDC_MOCK_SERVER_ECR_REPOSITORY }}"
-          image_tag="oidc-mock-${GITHUB_SHA}"
-          image_sha="${registry}/${repository}:${image_tag}"
-          image_latest="${registry}/${repository}:oidc-mock-latest"
-          
-          echo "Building image: $image_sha"
-          docker build -f Dockerfile -t "$image_sha" -t "$image_latest" .
-          
-          echo "Pushing images..."
-          docker push "$image_sha"
-          docker push "$image_latest"
-          
-          echo "Pushed to ECR: $image_sha and $image_latest"
-          echo "oidc_mock_tag=$image_tag" >> "$GITHUB_OUTPUT"
+  ecr-publish-image:
+    needs: [ assemble ]
+    uses: ministryofjustice/laa-ccms-common-workflows/.github/workflows/ecr-publish-image.yml@ecr-tag-latest
+    permissions:
+      contents: read
+      id-token: write
+    with:
+      image_version: ${{ format('{0}-{1}', vars.LAA_OIDC_MOCK_SERVER_IMAGE_PREFIX, needs.assemble.outputs.published_artifact_version) }}
+      image_scan: false
+      tag_with_latest: true
+    secrets:
+      gh_token: ${{ secrets.GITHUB_TOKEN }}
+      ecr_repository: ${{ vars.LAA_OIDC_MOCK_SERVER_ECR_REPOSITORY }}
+      ecr_region: ${{ vars.LAA_OIDC_MOCK_SERVER_ECR_REGION }}
+      ecr_role_to_assume: ${{ secrets.LAA_OIDC_MOCK_SERVER_ECR_ROLE_TO_ASSUME }}
