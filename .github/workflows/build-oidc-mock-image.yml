@@ -1,0 +1,43 @@
+name: Build and Publish OIDC mock image to ECR
+
+on:
+  push:
+    branches:
+      - main
+      - build-to-ecr
+
+permissions:
+  contents: read
+
+jobs:
+  assemble:
+    uses: ministryofjustice/laa-ccms-common-workflows/.github/workflows/gradle-build-and-publish.yml@v1
+    permissions:
+      contents: write
+      packages: write
+    with:
+      build_command: 'assemble'
+      publish_package: 'false'
+      override_version: ${{ needs.define-feature-version.outputs.feature_version }}
+      junit_results: 'false'
+      junit_report: 'false'
+      checkstyle_report: 'false'
+      jacoco_coverage_report: 'false'
+    secrets:
+      gh_token: ${{ secrets.GITHUB_TOKEN }}
+
+  ecr-publish-image:
+    needs: [ assemble ]
+    uses: ministryofjustice/laa-ccms-common-workflows/.github/workflows/ecr-publish-image.yml@v1
+    permissions:
+      contents: read
+      id-token: write
+    with:
+      image_version: ${{ format('{0}-{1}', vars.LAA_OIDC_MOCK_SERVER_IMAGE_PREFIX, needs.assemble.outputs.published_artifact_version) }}
+      image_scan: false
+      tag_with_latest: true
+    secrets:
+      gh_token: ${{ secrets.GITHUB_TOKEN }}
+      ecr_repository: ${{ vars.LAA_OIDC_MOCK_SERVER_ECR_REPOSITORY }}
+      ecr_region: ${{ vars.LAA_OIDC_MOCK_SERVER_ECR_REGION }}
+      ecr_role_to_assume: ${{ secrets.LAA_OIDC_MOCK_SERVER_ECR_ROLE_TO_ASSUME }}

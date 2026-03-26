@@ -1,6 +1,8 @@
 # LAA OIDC Mock Server
 
-A Spring Boot-based OpenID Connect (OIDC) mock server for testing and development purposes. This server simulates an OIDC provider, making it easier to develop and test OIDC client applications without depending on a production identity provider.
+A Spring Boot-based OpenID Connect (OIDC) mock server for testing and development purposes. This
+server simulates an OIDC provider, making it easier to develop and test OIDC client applications
+without depending on a production identity provider.
 
 ## Prerequisites
 
@@ -29,6 +31,7 @@ Using the Gradle wrapper:
 #### Using docker-compose within this repository
 
 For a fast way to run the server, you can use the docker-compose.yml file in this repository:
+
 ```bash
 docker-compose up -d
 ```
@@ -36,6 +39,7 @@ docker-compose up -d
 #### Creating a docker image
 
 First build the jar file:
+
 ```bash
 ./gradlew clean build
 ```
@@ -58,6 +62,7 @@ services:
 ```
 
 Then run the docker-compose file:
+
 ```shell
 docker-compose up -d
 ```
@@ -68,7 +73,8 @@ docker-compose up -d
 ./gradlew bootRun
 ```
 
-The server will start on the default port (usually 8080, check application.yml for specific configuration).
+The server will start on the default port (usually 8080, check application.yml for specific
+configuration).
 
 ## Features
 
@@ -100,20 +106,39 @@ src/
 
 ## Configuration
 
-The application can be configured through the `application.yml` file located in `src/main/resources/`.
+The application can be configured through the `application.yml` file located in
+`src/main/resources/`.
 
 ### Environment variables
 
-- `LAA_ACCOUNTS` (comma separated) controls the values emitted in the `LAA_ACCOUNTS` ID token claim.  
+- `LAA_ACCOUNTS` (comma separated) controls the values emitted in the `LAA_ACCOUNTS` ID token
+  claim.  
   Defaults to `1,123,0P322F`.
 - `FIRM_CODE` controls the values emitted in the `FIRM_CODE` ID token claim.  
-    Defaults to `1234`.
+  Defaults to `1234`.
 - `FIRM_NAME` controls the values emitted in the `FIRM_NAME` ID token claim.  
-    Defaults to `TEST FIRM NAME`.
+  Defaults to `TEST FIRM NAME`.
 
 ## Development
 
 This project uses:
+
 - Spring Boot 4.0.3
 - Java 21
 - Gradle as the build tool
+
+## ECR
+
+The repo also builds and publishes an ECR image. This can be accessed by having role
+access to the ECR repo. GitHub repositories can be added to the ECR configuration to grant access
+on a per repository basis to allow pulling the OIDC mock server image in your GitHub actions.
+Configuration can be found
+[here](https://github.com/ministryofjustice/cloud-platform-environments/tree/main/namespaces/live.cloud-platform.service.justice.gov.uk/laa-oidc-mock-server-dev/resources/ecr.tf).
+
+By raising and merging a PR to this repo, your GitHub repository will be granted the required
+GitHub action variables to pull the OIDC mock server image from ECR:
+
+- `LAA_MOCK_OIDC_SERVER_ECR_REPOSITORY`
+- `LAA_MOCK_OIDC_SERVER_ECR_REGION`
+- `LAA_MOCK_OIDC_SERVER_ECR_ROLE_TO_ASSUME`
+
