@@ -1,3 +1,5 @@
+[![Ministry of Justice Repository Compliance Badge](https://github-community.service.justice.gov.uk/repository-standards/api/laa-oidc-mock-server/badge)](https://github-community.service.justice.gov.uk/repository-standards/laa-oidc-mock-server)
+
 # LAA OIDC Mock Server
 
 A Spring Boot-based OpenID Connect (OIDC) mock server for testing and development purposes. This
