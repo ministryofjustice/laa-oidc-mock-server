@@ -1,5 +1,15 @@
 services:
   laa-mock-oidc-service:
+    container_name: oidc
     build: .
     ports:
       - "9000:9000"
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "9000"] # Checks if the port is open
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    environment:
+      LAA_ACCOUNTS: ${LAA_ACCOUNTS}
+      REDIRECT_BASE_URI: ${REDIRECT_BASE_URI:-localhost:8082}
