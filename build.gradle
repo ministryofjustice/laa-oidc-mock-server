@@ -1,16 +1,8 @@
 plugins {
-    id 'java'
-    id 'uk.gov.laa.springboot.laa-spring-boot-gradle-plugin' version '2.1.2'
+    id 'uk.gov.justice.service.laa.laa-spring-boot-gradle-plugin' version '4.1.1'
 }
 
 group = 'uk.gov'
-version = '0.0.1-SNAPSHOT'
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
-}
 
 repositories {
     mavenCentral()
@@ -28,4 +20,9 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+// The shared plugin enables Checkstyle, but this project has no Checkstyle ruleset.
+tasks.withType(Checkstyle).configureEach {
+    enabled = false
 }

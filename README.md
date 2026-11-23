@@ -6,8 +6,10 @@ without depending on a production identity provider.
 
 ## Prerequisites
 
-- Java 21 or higher
-- Gradle 8.x or higher
+- JDK 25
+- Docker with Docker Compose, if running the server in a container
+
+Use the included Gradle wrapper; no separate Gradle installation is required.
 
 ## Getting Started
 
@@ -73,8 +75,7 @@ docker-compose up -d
 ./gradlew bootRun
 ```
 
-The server will start on the default port (usually 8080, check application.yml for specific
-configuration).
+The server listens on port 9000 by default.
 
 ## Features
 
@@ -123,8 +124,8 @@ The application can be configured through the `application.yml` file located in
 
 This project uses:
 
-- Spring Boot 4.0.3
-- Java 21
+- Spring Boot 4
+- Java 25 (Amazon Corretto on Alpine in the shared LAA container image)
 - Gradle as the build tool
 
 ## ECR
