@@ -7,10 +7,6 @@ logging:
 
 spring:
   security:
-    user:
-      name: "provider.user@provider.com"
-      password: "{noop}password"
-      roles: "USER"
     oauth2:
       authorizationserver:
         client:
@@ -33,4 +29,9 @@ spring:
                 - "profile"
                 - "email"
 
-
+# Everyone this mock will sign in. Add an entry per user the tests need; each one's email and
+# firm appear in its token, so they resolve to different people downstream.
+mock:
+  users:
+    - username: "provider.user@provider.com"
+      password: "password"

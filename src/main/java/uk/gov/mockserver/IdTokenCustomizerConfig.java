@@ -1,8 +1,9 @@
-
 package uk.gov.mockserver;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,17 +15,22 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 @Configuration
 public class IdTokenCustomizerConfig {
 
-  private final List<String> laaAccounts;
-  private final String firmCode;
-  private final String firmName;
+  private final Map<String, MockUsers.User> usersByUsername;
+  private final List<String> defaultLaaAccounts;
+  private final String defaultFirmCode;
+  private final String defaultFirmName;
 
   public IdTokenCustomizerConfig(
-          @Value("${LAA_ACCOUNTS:1,123,0P322F}") List<String> laaAccounts,
-          @Value("${FIRM_CODE:1234}") String firmCode,
-          @Value("${FIRM_NAME:TEST FIRM NAME}") String firmName) {
-    this.laaAccounts = List.copyOf(laaAccounts);
-    this.firmCode = firmCode;
-    this.firmName = firmName;
+      MockUsers mockUsers,
+      @Value("${LAA_ACCOUNTS:1,123,0P322F}") List<String> laaAccounts,
+      @Value("${FIRM_CODE:1234}") String firmCode,
+      @Value("${FIRM_NAME:TEST FIRM NAME}") String firmName) {
+    this.usersByUsername =
+        mockUsers.users().stream()
+            .collect(java.util.stream.Collectors.toMap(MockUsers.User::username, Function.identity()));
+    this.defaultLaaAccounts = List.copyOf(laaAccounts);
+    this.defaultFirmCode = firmCode;
+    this.defaultFirmName = firmName;
   }
 
   @Bean
@@ -32,38 +38,39 @@ public class IdTokenCustomizerConfig {
     return context -> {
       if (OidcParameterNames.ID_TOKEN.equals(context.getTokenType().getValue())) {
         OidcUserInfo userInfo = createUser(context.getPrincipal().getName());
-        context.getClaims().claims(claims ->
-            claims.putAll(userInfo.getClaims()));
+        context.getClaims().claims(claims -> claims.putAll(userInfo.getClaims()));
       }
     };
   }
 
-
-  /**
-   * Examples
-   *
-   * @param username user name
-   * @return OidcUserInfo
-   */
-  private OidcUserInfo createUser(String username) {
+  OidcUserInfo createUser(String username) {
+    MockUsers.User user = usersByUsername.get(username);
+    String email = user == null ? username : user.emailOrUsername();
     return OidcUserInfo.builder()
         .subject(username)
-        .name("PROVIDER USER")
-        .givenName("PROVIDER")
-        .familyName("USER")
+        .name(valueOr(user == null ? null : user.name(), "PROVIDER USER"))
+        .givenName(valueOr(user == null ? null : user.givenName(), "PROVIDER"))
+        .familyName(valueOr(user == null ? null : user.familyName(), "USER"))
         .preferredUsername(username)
         .picture("https://govuk.com/" + username + ".jpg")
-        .email("provider.user@provider.com")
+        .email(email)
         .emailVerified(true)
         .birthdate("1970-01-01")
         .phoneNumber("+1 (604) 555-1234;ext=5678")
         .phoneNumberVerified(false)
         .claim("address", Collections.singletonMap("formatted",
             "Champ de Mars\n5 Av. Anatole France\n75007 Paris\nFrance"))
-        .claim("LAA_ACCOUNTS", laaAccounts)
-        .claim("FIRM_NAME", firmName)
-        .claim("FIRM_CODE", firmCode)
+        .claim("LAA_ACCOUNTS",
+            user == null || user.laaAccounts() == null || user.laaAccounts().isEmpty()
+                ? defaultLaaAccounts
+                : List.copyOf(user.laaAccounts()))
+        .claim("FIRM_NAME", valueOr(user == null ? null : user.firmName(), defaultFirmName))
+        .claim("FIRM_CODE", valueOr(user == null ? null : user.firmCode(), defaultFirmCode))
         .updatedAt("2025-01-01T00:00:00Z")
         .build();
+  }
+
+  private static String valueOr(String value, String fallback) {
+    return value == null || value.isBlank() ? fallback : value;
   }
 }

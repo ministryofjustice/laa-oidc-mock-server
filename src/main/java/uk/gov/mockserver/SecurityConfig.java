@@ -2,6 +2,7 @@ package uk.gov.mockserver;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+import java.util.List;
 import java.util.Set;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,10 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
@@ -41,6 +46,24 @@ public class SecurityConfig {
     http.authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
         .formLogin(form -> form.loginPage("/login").permitAll());
     return http.build();
+  }
+
+  /** Declaring this replaces Boot's single default user with everyone in {@code mock.users}. */
+  @Bean
+  UserDetailsService userDetailsService(MockUsers mockUsers) {
+    List<UserDetails> users =
+        mockUsers.users().stream()
+            .map(user -> (UserDetails) User.withUsername(user.username())
+                .password(encoded(user.password()))
+                .roles("USER")
+                .build())
+            .toList();
+    return new InMemoryUserDetailsManager(users);
+  }
+
+  /** A password already carrying an encoder prefix is left alone. */
+  private static String encoded(String password) {
+    return password.startsWith("{") ? password : "{noop}" + password;
   }
 
   private static MediaTypeRequestMatcher htmlRequests() {

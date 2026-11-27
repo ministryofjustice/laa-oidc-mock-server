@@ -109,6 +109,49 @@ src/
 The application can be configured through the `application.yml` file located in
 `src/main/resources/`.
 
+### Users
+
+The server signs in the users listed under `mock.users`. Out of the box there is one:
+
+```yaml
+mock:
+  users:
+    - username: "provider.user@provider.com"
+      password: "password"
+```
+
+Add an entry per user you need. Only `username` and `password` are required; each user may also set
+`email`, `name`, `given-name`, `family-name`, `firm-code`, `firm-name` and `laa-accounts`:
+
+```yaml
+mock:
+  users:
+    - username: "provider.user@provider.com"
+      password: "password"
+    - username: "user.two@example.com"
+      password: "another-password"
+      firm-code: "9999"
+      firm-name: "OTHER FIRM"
+      laa-accounts: "7,8"
+```
+
+The same two users as environment variables, for a deployed server:
+
+```
+MOCK_USERS_0_USERNAME=provider.user@provider.com
+MOCK_USERS_0_PASSWORD=password
+MOCK_USERS_1_USERNAME=user.two@example.com
+MOCK_USERS_1_PASSWORD=another-password
+MOCK_USERS_1_FIRM_CODE=9999
+MOCK_USERS_1_FIRM_NAME=OTHER FIRM
+```
+
+`email` defaults to the username, which usually matters: a client that looks its own user up by
+email address will otherwise resolve every sign-in to the same person. Anything else you omit falls
+back to the values below, so the defaults are unchanged for a single-user setup.
+
+The whole list can also be passed in `SPRING_APPLICATION_JSON`.
+
 ### Environment variables
 
 - `LAA_ACCOUNTS` (comma separated) controls the values emitted in the `LAA_ACCOUNTS` ID token
