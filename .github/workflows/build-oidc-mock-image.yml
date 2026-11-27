@@ -33,7 +33,7 @@ jobs:
       image_version: ${{ format('{0}-{1}', vars.LAA_OIDC_MOCK_SERVER_IMAGE_PREFIX, needs.build.outputs.published_artifact_version) }}
       image_scan: 'false'
       publish: ${{ github.ref_name == 'main' && 'true' || 'false' }}
-      tag_with_latest: ${{ github.ref_name == 'main' && 'true' || 'false' }}
+      tag_with_latest: ${{ github.ref_name == 'main' }}
     secrets:
       gh_token: ${{ secrets.GITHUB_TOKEN }}
       ecr_repository: ${{ vars.LAA_OIDC_MOCK_SERVER_ECR_REPOSITORY }}

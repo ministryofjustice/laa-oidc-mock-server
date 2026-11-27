@@ -22,6 +22,10 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+tasks.named('bootJar') {
+    archiveFileName = 'app.jar'
+}
+
 // The shared plugin enables Checkstyle, but this project has no Checkstyle ruleset.
 tasks.withType(Checkstyle).configureEach {
     enabled = false
