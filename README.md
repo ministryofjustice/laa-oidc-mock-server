@@ -155,6 +155,15 @@ back to the values below, so the defaults are unchanged for a single-user setup.
 
 The whole list can also be passed in `SPRING_APPLICATION_JSON`.
 
+Whichever form you use, give the whole list, starting at `0`. Spring binds a list from one source
+only rather than merging them, so setting just `MOCK_USERS_1_USERNAME` does not add a second user to
+the one above - it replaces the list and leaves the server refusing to start:
+
+```
+Failed to bind properties under 'mock.users'
+The elements [mock.users[1].password, mock.users[1].username] were left unbound.
+```
+
 ### Environment variables
 
 - `LAA_ACCOUNTS` (comma separated) controls the values emitted in the `LAA_ACCOUNTS` ID token
